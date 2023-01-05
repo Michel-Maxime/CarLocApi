@@ -1,9 +1,14 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuthDto } from './dto/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { jwtSecret } from '../utils/constants';
+import { Request, Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -34,7 +39,7 @@ export class AuthService {
 
     return { message: 'signup was successful' };
   }
-  async signin(dto: AuthDto) {
+  async signin(dto: AuthDto, req: Request, res: Response) {
     const { email, password } = dto;
 
     const foundUser = await this._prisma.user.findUnique({
@@ -59,7 +64,13 @@ export class AuthService {
       email: foundUser.email,
     });
 
-    return { token };
+    if (!token) {
+      throw new ForbiddenException();
+    }
+
+    //TODO : ne devrait pas être de la responsabilité du service mais du controller
+    res.cookie('token', token);
+    return res.send({ message: 'Logged in succefully' });
   }
   async signout() {
     return '';
