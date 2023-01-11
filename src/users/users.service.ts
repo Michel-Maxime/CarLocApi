@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { NotFoundError } from 'rxjs';
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
