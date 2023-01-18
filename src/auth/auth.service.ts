@@ -70,6 +70,7 @@ export class AuthService {
 
     //TODO : ne devrait pas être de la responsabilité du service mais du controller
     res.cookie('token', token);
+    //res.header('token', token);
     return res.send({ message: 'Logged in succefully' });
   }
   async signout(req: Request, res: Response) {
