@@ -23,7 +23,11 @@ export class CarsService {
   }
 
   async findAll() {
-    return await this._prisma.car.findMany();
+    return await this._prisma.car.findMany({
+      // include: {
+      //   owner: true,
+      // },
+    });
   }
 
   async findOne(id: string) {

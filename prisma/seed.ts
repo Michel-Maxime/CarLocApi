@@ -11,7 +11,7 @@ const users = Array.from({ length: 20 }).map(() => ({
 
 const cars = Array.from({ length: 20 }).map(() => ({
   ownerId: users[Math.floor(Math.random() * users.length)].id,
-  image: faker.image.imageUrl(),
+  image: faker.image.transport(),
   name: faker.vehicle.vehicle(),
   description: faker.lorem.paragraph(),
   price: faker.datatype.number(),

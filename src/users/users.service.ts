@@ -10,7 +10,10 @@ import { PrismaService } from '../../prisma/prisma.service';
 export class UsersService {
   constructor(private _prisma: PrismaService) {}
   async getMyUser(id: string, req: Request) {
-    const user = await this._prisma.user.findUnique({ where: { id } });
+    const user = await this._prisma.user.findUnique({
+      where: { id },
+      //include: { cars: true },
+    });
 
     if (!user) {
       throw new NotFoundException();
@@ -23,6 +26,8 @@ export class UsersService {
     }
 
     delete user.hashedPassword;
+
+    console.log(user);
 
     return { user };
   }

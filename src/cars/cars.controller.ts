@@ -24,7 +24,7 @@ export class CarsController {
     console.log(createCarDto);
     return this.carsService.create(createCarDto);
   }
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get()
   findAll(@Headers() headers) {
     console.log(headers);
