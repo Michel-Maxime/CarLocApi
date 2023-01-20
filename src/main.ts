@@ -15,7 +15,7 @@ async function bootstrap() {
     .setTitle('Carloc Swagger')
     .setDescription('this is the swagger of the Carloc API')
     .setVersion('1.0')
-    .addTag('cars')
+    //.addTag('cars')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

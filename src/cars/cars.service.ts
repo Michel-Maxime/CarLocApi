@@ -23,11 +23,15 @@ export class CarsService {
   }
 
   async findAll() {
-    return await this._prisma.car.findMany({
+    const cars = await this._prisma.car.findMany({
       // include: {
       //   owner: true,
       // },
     });
+
+    if (cars.length < 1) throw new NotFoundException('The is no offer');
+
+    return cars;
   }
 
   async findOne(id: string) {
@@ -35,10 +39,10 @@ export class CarsService {
       where: { id },
     });
     if (!foundCar) {
-      throw new NotFoundException();
+      throw new NotFoundException("This offer doesn't exist");
     }
 
-    return { foundCar };
+    return foundCar;
   }
 
   async update(id: string, updateCarDto: UpdateCarDto) {

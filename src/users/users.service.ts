@@ -12,7 +12,7 @@ export class UsersService {
   async getMyUser(id: string, req: Request) {
     const user = await this._prisma.user.findUnique({
       where: { id },
-      //include: { cars: true },
+      include: { cars: true },
     });
 
     if (!user) {
@@ -21,7 +21,7 @@ export class UsersService {
 
     const decodedUser = req.user as { id: string; email: string };
 
-    if (user.id !== decodedUser.id) {
+    if (user.id !== decodedUser?.id) {
       throw new ForbiddenException();
     }
 
@@ -32,8 +32,12 @@ export class UsersService {
     return { user };
   }
   async getUsers() {
-    return await this._prisma.user.findMany({
+    const users = await this._prisma.user.findMany({
       select: { id: true, email: true },
     });
+
+    if (users.length < 1) throw new NotFoundException();
+
+    return users;
   }
 }
