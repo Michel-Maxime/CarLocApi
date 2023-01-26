@@ -4,27 +4,26 @@ import {
   Get,
   InternalServerErrorException,
   Post,
-  Req,
   Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import {
   ApiTags,
-  ApiParam,
   ApiOperation,
-  ApiCreatedResponse,
-  ApiUnprocessableEntityResponse,
-  ApiBadRequestResponse,
   ApiOkResponse,
   ApiNotFoundResponse,
   ApiBody,
 } from '@nestjs/swagger';
+import AuthResponseBuilder from './auth.response.builder';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly authResponseBuilder: AuthResponseBuilder,
+  ) {}
 
   @Post('signup')
   @ApiOperation({
@@ -41,8 +40,9 @@ export class AuthController {
     description: 'Error during signup',
     type: InternalServerErrorException,
   })
-  signup(@Body() dto: AuthDto) {
-    return this.authService.signup(dto);
+  async signup(@Body() dto: AuthDto): Promise<{ message: string }> {
+    await this.authService.signup(dto);
+    return this.authResponseBuilder.sendResponse('signup was succefull');
   }
 
   @Post('signin')
@@ -60,8 +60,10 @@ export class AuthController {
     description: 'Error during signin',
     type: InternalServerErrorException,
   })
-  signin(@Body() dto: AuthDto, @Req() req, @Res() res) {
-    return this.authService.signin(dto, req, res);
+  async signin(@Body() dto: AuthDto, @Res() res): Promise<{ message: string }> {
+    const token = await this.authService.signin(dto);
+    res.cookie('token', token);
+    return this.authResponseBuilder.sendResponse('signin was succefull');
   }
 
   @Get('signout')
@@ -75,7 +77,8 @@ export class AuthController {
     description: 'Error during signout',
     type: InternalServerErrorException,
   })
-  signout(@Req() req, @Res() res) {
-    return this.authService.signout(req, res);
+  signout(@Res() res): { message: string } {
+    res.clearCookie('token');
+    return this.authResponseBuilder.sendResponse('signout was succefull');
   }
 }

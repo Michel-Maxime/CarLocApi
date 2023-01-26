@@ -17,7 +17,7 @@ export class AuthService {
     private readonly _jwt: JwtService,
   ) {}
 
-  async signup(dto: AuthDto) {
+  async signup(dto: AuthDto): Promise<void> {
     const { email, password } = dto;
 
     const foundUser = await this._prisma.user.findUnique({
@@ -36,10 +36,8 @@ export class AuthService {
         hashedPassword,
       },
     });
-
-    return { message: 'signup was successful' };
   }
-  async signin(dto: AuthDto, req: Request, res: Response) {
+  async signin(dto: AuthDto): Promise<string> {
     const { email, password } = dto;
 
     const foundUser = await this._prisma.user.findUnique({
@@ -68,14 +66,7 @@ export class AuthService {
       throw new ForbiddenException();
     }
 
-    //TODO : ne devrait pas être de la responsabilité du service mais du controller
-    res.cookie('token', token);
-    //res.header('token', token);
-    return res.send({ message: 'Logged in succefully' });
-  }
-  async signout(req: Request, res: Response) {
-    res.clearCookie('token');
-    return res.send({ message: 'Logged out succefully' });
+    return token;
   }
 
   // TODO : do a service

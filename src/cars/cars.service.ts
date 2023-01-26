@@ -6,7 +6,7 @@ import { UpdateCarDto } from './dto/update-car.dto';
 @Injectable()
 export class CarsService {
   constructor(private readonly _prisma: PrismaService) {}
-  async create(createCarDto: CreateCarDto) {
+  async create(createCarDto: CreateCarDto): Promise<void> {
     const { ownerId, image, name, description, price } = createCarDto;
 
     await this._prisma.car.create({
@@ -18,8 +18,6 @@ export class CarsService {
         price: price,
       },
     });
-
-    return { message: 'add car succefully' };
   }
 
   async findAll() {
@@ -65,7 +63,5 @@ export class CarsService {
 
   async remove(id: string) {
     await this._prisma.car.delete({ where: { id: id } });
-
-    return `This action removes a #${id} car`;
   }
 }

@@ -27,11 +27,16 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { Car } from '../stripe/dto/car';
+import CarVM from './vm/car.vm';
+import CarResponseBuilder from './car.response.builder';
 
 @ApiTags('Cars')
 @Controller('cars')
 export class CarsController {
-  constructor(private readonly carsService: CarsService) {}
+  constructor(
+    private readonly carsService: CarsService,
+    private readonly _carResponseBuilder: CarResponseBuilder,
+  ) {}
 
   @Post()
   @ApiOperation({
@@ -48,8 +53,11 @@ export class CarsController {
     description: 'Error during creating offer',
     type: InternalServerErrorException,
   })
-  create(@Body() createCarDto: CreateCarDto) {
-    return this.carsService.create(createCarDto);
+  async create(
+    @Body() createCarDto: CreateCarDto,
+  ): Promise<{ message: string }> {
+    await this.carsService.create(createCarDto);
+    return this._carResponseBuilder.sendResponse('add car succefully');
   }
   //@UseGuards(JwtAuthGuard)
   @Get()
@@ -63,9 +71,7 @@ export class CarsController {
     description: 'The is no offer',
     type: NotFoundException,
   })
-  findAll(@Headers() headers) {
-    console.log(headers);
-
+  findAll(@Headers() headers): Promise<CarVM[]> {
     return this.carsService.findAll();
   }
 
@@ -111,7 +117,6 @@ export class CarsController {
     type: NotFoundException,
   })
   update(@Param('id') id: string, @Body() updateCarDto: UpdateCarDto) {
-    console.log(updateCarDto);
     return this.carsService.update(id, updateCarDto);
   }
 
@@ -131,7 +136,10 @@ export class CarsController {
     description: "This offer doesn't exist",
     type: NotFoundException,
   })
-  remove(@Param('id') id: string) {
-    return this.carsService.remove(id);
+  async remove(@Param('id') id: string): Promise<{ message: string }> {
+    await this.carsService.remove(id);
+    return this._carResponseBuilder.sendResponse(
+      `This action removes a #${id} car`,
+    );
   }
 }
