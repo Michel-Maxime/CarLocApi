@@ -8,7 +8,6 @@ import { AuthDto } from './dto/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { jwtSecret } from '../utils/constants';
-import { Request, Response } from 'express';
 
 @Injectable()
 export class AuthService {

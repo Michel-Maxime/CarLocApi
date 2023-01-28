@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   Post,
 } from '@nestjs/common';
-import { Car } from './dto/car';
+import { payInfos } from './dto/payInfos';
 import { StripeService } from './stripe.service';
 import {
   ApiTags,
@@ -28,7 +28,7 @@ export class StripeController {
     summary: 'pay for an offer',
   })
   @ApiBody({
-    type: Car,
+    type: payInfos,
     description: 'the new offer',
   })
   @ApiOkResponse({
@@ -38,11 +38,7 @@ export class StripeController {
     description: 'Error during pay for offer',
     type: InternalServerErrorException,
   })
-  checkout(@Body() body: { car: Car }) {
-    try {
-      return this._stripeService.checkout(body.car);
-    } catch (error) {
-      return error;
-    }
+  checkout(@Body() body: { payInfos: payInfos }) {
+    return this._stripeService.checkout(body.payInfos);
   }
 }

@@ -60,10 +60,10 @@ export class AuthController {
     description: 'Error during signin',
     type: InternalServerErrorException,
   })
-  async signin(@Body() dto: AuthDto, @Res() res): Promise<{ message: string }> {
+  async signin(@Body() dto: AuthDto, @Res() res) {
     const token = await this.authService.signin(dto);
     res.cookie('token', token);
-    return this.authResponseBuilder.sendResponse('signin was succefull');
+    res.send(this.authResponseBuilder.sendResponse('signin was succefull'));
   }
 
   @Get('signout')
@@ -77,8 +77,8 @@ export class AuthController {
     description: 'Error during signout',
     type: InternalServerErrorException,
   })
-  signout(@Res() res): { message: string } {
+  signout(@Res() res) {
     res.clearCookie('token');
-    return this.authResponseBuilder.sendResponse('signout was succefull');
+    res.send(this.authResponseBuilder.sendResponse('signout was succefull'));
   }
 }

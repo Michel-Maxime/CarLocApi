@@ -26,6 +26,22 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(JwtAuthGuard)
+  @Get('me')
+  @ApiOperation({
+    summary: 'Find current user',
+  })
+  @ApiOkResponse({
+    type: User,
+  })
+  @ApiNotFoundResponse({
+    description: 'User cannot be founded.',
+    type: NotFoundException,
+  })
+  getMyUser(@Req() req) {
+    return this.usersService.getCurrentUser(req);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiOperation({
     summary: 'Find one user by id',
@@ -42,8 +58,8 @@ export class UsersController {
     description: 'User cannot be founded.',
     type: NotFoundException,
   })
-  getMyUser(@Param() params: { id: string }, @Req() req) {
-    return this.usersService.getMyUser(params.id, req);
+  getUserById(@Param() params: { id: string }, @Req() req) {
+    return this.usersService.getUserById(params.id, req);
   }
 
   @Get()
@@ -51,7 +67,7 @@ export class UsersController {
     summary: 'Find all users',
   })
   @ApiOkResponse({
-    type: [User],
+    type: User,
   })
   @ApiNotFoundResponse({
     description: 'There is no user',

@@ -6,7 +6,8 @@ const prisma = new PrismaClient();
 const users = Array.from({ length: 20 }).map(() => ({
   id: faker.datatype.uuid(),
   email: faker.internet.email(),
-  hashedPassword: 'password',
+  hashedPassword:
+    '$2b$10$yKTspcEnXXlkB8hB32.DfOQkMrQtCbnHBuGLYQ.J8BmyDmgZxcaxa',
 })) as User[];
 
 const cars = Array.from({ length: 20 }).map(() => ({

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Car } from '../../stripe/dto/car';
+import CarVM from '../../cars/vm/car.vm';
 
 export class User {
   @ApiProperty({
@@ -24,7 +24,7 @@ export class User {
   updatedAt: Date;
   @ApiProperty({
     description: 'The car offer of the user',
-    type: [Car],
+    type: [CarVM],
   })
-  cars: Car[];
+  cars: CarVM[];
 }

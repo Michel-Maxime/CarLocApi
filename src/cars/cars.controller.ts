@@ -10,6 +10,7 @@ import {
   UseGuards,
   InternalServerErrorException,
   NotFoundException,
+  Req,
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
 import { CreateCarDto } from './dto/create-car.dto';
@@ -26,11 +27,12 @@ import {
   ApiNotFoundResponse,
   ApiBody,
 } from '@nestjs/swagger';
-import { Car } from '../stripe/dto/car';
+import { payInfos } from '../stripe/dto/payInfos';
 import CarVM from './vm/car.vm';
 import CarResponseBuilder from './car.response.builder';
 
 @ApiTags('Cars')
+//@UseGuards(JwtAuthGuard)
 @Controller('cars')
 export class CarsController {
   constructor(
@@ -59,23 +61,21 @@ export class CarsController {
     await this.carsService.create(createCarDto);
     return this._carResponseBuilder.sendResponse('add car succefully');
   }
-  //@UseGuards(JwtAuthGuard)
   @Get()
   @ApiOperation({
     summary: 'get all Cars',
   })
   @ApiOkResponse({
-    type: [Car],
+    type: [CarVM],
   })
   @ApiNotFoundResponse({
     description: 'The is no offer',
     type: NotFoundException,
   })
-  findAll(@Headers() headers): Promise<CarVM[]> {
-    return this.carsService.findAll();
+  findAll(@Req() req): Promise<CarVM[]> {
+    return this.carsService.findAll(req);
   }
 
-  //@UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiOperation({
     summary: 'get offer by id',
@@ -86,7 +86,7 @@ export class CarsController {
     description: 'The car id',
   })
   @ApiOkResponse({
-    type: Car,
+    type: CarVM,
   })
   @ApiNotFoundResponse({
     description: "This offer doesn't exist",

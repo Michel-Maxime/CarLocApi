@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
+import { Request } from 'express';
 
 @Injectable()
 export class CarsService {
@@ -20,11 +21,11 @@ export class CarsService {
     });
   }
 
-  async findAll() {
+  async findAll(req: Request) {
+    const decodedUser = req.user as { id: string; email: string };
+
     const cars = await this._prisma.car.findMany({
-      // include: {
-      //   owner: true,
-      // },
+      where: { NOT: { ownerId: decodedUser?.id } },
     });
 
     if (cars.length < 1) throw new NotFoundException('The is no offer');
@@ -59,6 +60,17 @@ export class CarsService {
     });
 
     return `updates succefully of the #${id} car`;
+  }
+
+  async updateIsAvailbe(id: string, isAvaible: boolean) {
+    await this._prisma.car.update({
+      where: {
+        id: id,
+      },
+      data: {
+        isAvaible: isAvaible,
+      },
+    });
   }
 
   async remove(id: string) {
