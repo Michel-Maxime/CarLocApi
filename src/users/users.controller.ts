@@ -12,9 +12,6 @@ import {
   ApiTags,
   ApiParam,
   ApiOperation,
-  ApiCreatedResponse,
-  ApiUnprocessableEntityResponse,
-  ApiBadRequestResponse,
   ApiOkResponse,
   ApiNotFoundResponse,
 } from '@nestjs/swagger';

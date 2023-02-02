@@ -7,7 +7,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto/auth.dto';
+import { LoginDto } from './dto/login.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -16,6 +16,7 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import AuthResponseBuilder from './auth.response.builder';
+import { RegisterDto } from './dto/register.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -30,7 +31,7 @@ export class AuthController {
     summary: 'signup',
   })
   @ApiBody({
-    type: AuthDto,
+    type: RegisterDto,
     description: 'the credentials',
   })
   @ApiOkResponse({
@@ -40,8 +41,9 @@ export class AuthController {
     description: 'Error during signup',
     type: InternalServerErrorException,
   })
-  async signup(@Body() dto: AuthDto): Promise<{ message: string }> {
-    await this.authService.signup(dto);
+  async signup(@Body() dto: RegisterDto, @Res() res) {
+    const token = await this.authService.signin(dto);
+    res.cookie('token', token);
     return this.authResponseBuilder.sendResponse('signup was succefull');
   }
 
@@ -50,7 +52,7 @@ export class AuthController {
     summary: 'signin',
   })
   @ApiBody({
-    type: AuthDto,
+    type: LoginDto,
     description: 'the credentials',
   })
   @ApiOkResponse({
@@ -60,7 +62,7 @@ export class AuthController {
     description: 'Error during signin',
     type: InternalServerErrorException,
   })
-  async signin(@Body() dto: AuthDto, @Res() res) {
+  async signin(@Body() dto: LoginDto, @Res() res) {
     const token = await this.authService.signin(dto);
     res.cookie('token', token);
     res.send(this.authResponseBuilder.sendResponse('signin was succefull'));

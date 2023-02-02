@@ -4,10 +4,11 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { AuthDto } from './dto/auth.dto';
+import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { jwtSecret } from '../utils/constants';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -16,8 +17,8 @@ export class AuthService {
     private readonly _jwt: JwtService,
   ) {}
 
-  async signup(dto: AuthDto): Promise<void> {
-    const { email, password } = dto;
+  async signup(dto: RegisterDto): Promise<string> {
+    const { email, password, name } = dto;
 
     const foundUser = await this._prisma.user.findUnique({
       where: { email: email },
@@ -32,11 +33,14 @@ export class AuthService {
     await this._prisma.user.create({
       data: {
         email,
+        name,
         hashedPassword,
       },
     });
+
+    return await this.signin(dto);
   }
-  async signin(dto: AuthDto): Promise<string> {
+  async signin(dto: LoginDto): Promise<string> {
     const { email, password } = dto;
 
     const foundUser = await this._prisma.user.findUnique({

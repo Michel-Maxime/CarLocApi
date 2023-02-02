@@ -49,6 +49,7 @@ export class UsersService {
     }
 
     delete user.hashedPassword;
+    console.log(user);
 
     return user;
   }

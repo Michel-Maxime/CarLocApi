@@ -13,7 +13,6 @@ export class JwtMiddleware implements NestMiddleware {
 
     if (token) {
       const decoded = this._jwt.verify(token, { secret: jwtSecret });
-
       req.user = decoded;
     }
 
